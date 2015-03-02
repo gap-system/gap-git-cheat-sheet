@@ -1,0 +1,220 @@
+\documentclass[8pt,a4paper]{article}
+%\usepackage[margin=1cm,landscape]{geometry}
+\usepackage[margin=1cm]{geometry}
+\usepackage{flowfram}
+\usepackage{xcolor}
+\usepackage{url}
+%\usepackage[draft]{flowfram}
+\ffvadjustfalse
+\setlength{\columnsep}{1.4cm}
+\Ncolumn{2}
+
+\newcommand{\git}[1]{\newline\indent{\tt{#1}}}
+
+\begin{document}
+
+{\small
+
+\centerline{\Large\bf GAP on GitHub: Quickstart}
+
+\vspace{10pt}
+\noindent
+{\Large\bf Configuration}\\
+You only need to do this once:
+\git{git config --global user.name "Your Name"}
+\git{git config --global user.email you@yourdomain.com}\\
+This data ends up in commits, so do it now before you forget!
+
+\vspace{10pt}
+\noindent
+{\Large\bf Get the GAP source code}
+\git{git clone git@github.com:gap-system/gap.git}
+
+\vspace{10pt}
+\noindent
+{\Large\bf Branch often}
+
+\noindent
+A new branch is like an independent copy of the source code.\\
+To switch to a new branch before editing, call:
+\git{git checkout master} \hfill \textcolor{red}{switch to the starting point}
+\git{git branch new\_branch\_name} \hfill \textcolor{red}{create new branch}
+\git{git checkout new\_branch\_name} \hfill \textcolor{red}{switch to new branch}\\
+Without an argument, the list of branches is displayed:
+\begin{verbatim}
+git branch
+master
+* new_branch_name 
+\end{verbatim}
+where the star marks the current branch.
+
+\noindent
+When you finished, \textcolor{red}{delete unused branches}:
+\git{git branch -d branch\_to\_delete}
+
+
+\vspace{10pt}
+\noindent
+{\Large\bf Who did what?}
+
+\noindent
+Each change recorded by git is called a “commit”.\\
+To examine commit history, call
+\git{git show} \hfill \textcolor{red}{show the most recent commit (ie current head)}
+\git{git log} \hfill \textcolor{red}{commit list in reverse chronological order}
+
+\vspace{10pt}
+\noindent
+{\Large\bf What have I done?}
+
+\noindent
+Probably the most important command. Example output:
+\begin{verbatim}
+git status
+  On branch new_branch_name        // current branch name
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in
+   working directory)
+
+        modified: modified_file.g  // file you just edited
+        
+Untracked files:
+  (use "git add <file>..." to include in what will be
+   committed)
+
+        new_file.g                 // file you just added
+        
+no changes added to commit
+(use "git add" and/or "git commit -a")
+\end{verbatim}
+
+\vspace{10pt}
+\noindent
+{\Large\bf Preparing your Commit}
+
+\noindent
+When ready, tell git which changes do you want to commit:
+\git{git add filename} \hfill \textcolor{red}{add particular file}
+\git{git add .} \hfill \textcolor{red}{add all modified and new}
+
+\noindent
+The status command then lists the staged changes:
+\begin{verbatim}
+git status
+On branch new_branch_name
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+       modified: modified_file.g
+       new file: new_file.g
+\end{verbatim}
+
+\noindent
+\vspace{10pt}
+{\Large\bf Commit!}
+
+\noindent
+The commit command will permanently record the staged changes. 
+The new commit becomes the new branch head. 
+To {\textcolor{red}{write commit message} in an editor, call
+\git{git commit}\\
+otherwise just call
+\git{git commit -m "My Commit Message"}
+
+\noindent
+Commits cannot be changed, but they can be discarded and re-done
+with the {\tt --amend} switch. {\bf Never amend commits that you have
+already shared with somebody.}
+
+\vspace{9pt}
+\centerline{\Large\bf Summary}
+
+\noindent
+{\bf Workspace} is the file system: files that you can edit
+\git{git add filename} \hfill \textcolor{red}{copy file to staging}
+\git{git reset HEAD filename} \hfill \textcolor{red}{copy staged file back}\\
+{\bf Staging} is a special area inside the git repository
+\git{git commit} \hfill \textcolor{red}{commit all staged files}\\
+{\bf Commits} are the permanently recorded history
+\git{git checkout -- filename} 
+\hfill \textcolor{red}{copy {\tt filename} from \\ \indent \hfill repository to workspace}
+
+\vspace{10pt}
+\centerline{\Large\bf Keeping in sync}
+
+\noindent
+If you have write access to the GAP repository,
+next time before you start any changes you should 
+incorporate changes from the master branch of the 
+remote repository with
+\git{git pull origin master} \hfill \textcolor{red}{fetch and merge}\\
+or (to linearise history if you have not pushed changes) with
+\git{git pull --rebase origin master} \hfill \textcolor{red}{fetch and rebase}\\
+Resolve conflicts, if there are any (see below),
+then switch to the top of the branch:
+\git{git checkout master} \hfill \textcolor{red}{switch to the starting point}\\
+If you don't have write access, see \url{https://help.github.com/articles/syncing-a-fork/} on syncing a fork.
+
+\vspace{5pt}
+\centerline{\Large\bf Merging}
+
+\noindent
+A commit with more than one parent is a merge commit:
+\git{git merge other\_branch}\\
+incorporates other branch/commit. If there is no conflict, 
+this automatically creates a new merge commit. Otherwise, 
+the conflicting regions are marked like this:
+\begin{verbatim}
+Lines that are either unchanged from a common ancestor, 
+or cleanly resolved because only one side changed.
+<<<<<<< yours:source_file.g
+It's frustrating to resolve conflicts. 
+Let's have coffee.
+=======
+It's easy to resolve conflicts with Git.
+>>>>>>> theirs:source_file.g
+Another line that is cleanly resolved or unmodified.
+\end{verbatim}
+Edit as needed; To finish, run one of:
+\git{git commit} \hfill \textcolor{red}{commit your merge conflict resolution}
+\git{git merge --abort} \hfill \textcolor{red}{ discard merge attempt}
+
+\vspace{10pt}
+\centerline{\Large\bf Branch Heads}
+
+\noindent
+A git branch is just a pointer to a commit. This commit is called the
+branch {\tt HEAD}. You can point it elsewhere with ({\tt --hard}) 
+or without ({\tt --soft}, less common) resetting the actual files. That is, the
+following discards content of the current branch and makes it
+indistinguishable from a new branch that started at {\tt new\_head\_commit}:
+\git{git reset --hard new\_head\_commit}
+
+\noindent
+There are various ways to specify a commit to reset to:\\
+{\tt 994bd8d4b279c549cb01ef4e684c246e555f6bae} \hfill \textcolor{gray}{40-digit sha1}\\
+{\tt 994bd8d} \hfill \textcolor{gray}{the first few digits of the sha1}\\
+{\tt branch\_name} \hfill \textcolor{gray}{the name of another branch pointing to it}\\
+{\tt 4.8.beta0} \hfill \textcolor{gray}{a tag in the GAP git repository}\\
+{\tt origin/master} \hfill \textcolor{gray}{the master branch in the remote origin}\\
+%{\verb|HEAD~|} \hfill \textcolor{gray}{first parent of the current head}\\
+%{\verb|HEAD~2|} \hfill \textcolor{gray}{first parent of the first parent of the current head}\\
+%{\verb|HEAD^2|} \hfill \textcolor{gray}{second parent (if exists) of the current head}\\
+%{\tt FETCH\_HEAD} \hfill \textcolor{gray}{commit downloaded with the git fetch command}\\
+
+\vspace{8pt}
+\centerline{\Large\bf Most important git commands!}
+
+\noindent
+Git comes with extensive documentation:
+\git{git help -i} \hfill most commonly used Git commands
+\git{git help -a} \hfill list of all Git commands
+\git{git help -g} \hfill list of available Git guides
+
+\vspace{2pt}
+\noindent{\it \tiny
+Adapted from \url{http://github.com/sagemath/git-trac-command/raw/master/doc/git-cheat-sheet.pdf}}
+
+}
+\end{document}
